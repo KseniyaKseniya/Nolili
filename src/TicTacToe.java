@@ -53,27 +53,30 @@ public class TicTacToe {
         boolean VvodVeren = false;
 
 
-
         do {
-            System.out.print("Игрок" + ActivnyIgrok + "Введите ряд от 1-3 через пробел ");
+            try {
+                System.out.print("Игрок" + ActivnyIgrok + "Введите ряд  и ячейку от 1-3 через пробел ");
 
-            int ryad = in.nextInt() - 1;
-            int stolbec = in.nextInt() - 1;
+                int ryad = Integer.parseInt(in.next()) - 1;
+                int stolbec = Integer.parseInt(in.next()) - 1;
 
-            if (ryad >= 0 && ryad < Ryadi && stolbec >= 0 && stolbec < Stolbci && Сетка[ryad][stolbec] == Pusto) {
-                Сетка[ryad][stolbec] = ActivnyIgrok;
-                VvodVeren = true;
-            } else{
-                System.out.print("Выбранное размещение(" + (ryad + 1) + "," +
-                        (stolbec + 1) + ")Не может быть использовано.Попробуйте еще раз   ");
-        }
+                if (ryad >= 0 && ryad < Ryadi && stolbec >= 0 && stolbec < Stolbci && Сетка[ryad][stolbec] == Pusto) {
+                    Сетка[ryad][stolbec] = ActivnyIgrok;
+                    VvodVeren = true;
+                } else {
+                    System.out.print("Выбранное размещение(" + (ryad + 1) + "," +
+                            (stolbec + 1) + ")Не может быть использовано.Попробуйте еще раз   ");
+                }
+            } catch (NumberFormatException e) {
+                System.out.println("Вводим только числа");
+
+            }   }
+            while (!VvodVeren) ;
+
+
     }
-        while (!VvodVeren);
 
 
-
-    }
-    //
     public static void analyzgame() {
         String Pobeditel = NaitiPobeditelya();
         if (Pobeditel.equals(Krestik)) {
@@ -118,13 +121,13 @@ public class TicTacToe {
         for (int stolbec = 0; stolbec < Stolbci; stolbec++) {
             kolichestvoodinakovix = 0;
             for (int ryad = 0; ryad < Ryadi; ryad++) {
-                if (Сетка[stolbec][0] != Pusto && Сетка[stolbec][0] == Сетка[stolbec][ryad]) {
+                if (Сетка[0][stolbec] != Pusto && Сетка[0][stolbec] == Сетка[ryad][stolbec]) {
                     kolichestvoodinakovix++;
                 }
 
             }
             if (kolichestvoodinakovix == 3) {
-                return Сетка[stolbec][0];
+                return Сетка[0][stolbec];
             }
         }
         if (Сетка[0][0] != Pusto && Сетка[0][0] == Сетка[1][1] && Сетка[0][0] == Сетка[2][2]) {
@@ -135,7 +138,7 @@ public class TicTacToe {
 
         if (Сетка[0][2] != Pusto && Сетка[1][1] == Сетка[0][2] && Сетка[2][0] == Сетка[0][2]) {
 
-            return Сетка[0][0];
+            return Сетка[0][2];
         }
       return Pusto;
     }
