@@ -1,99 +1,97 @@
-import com.sun.org.apache.xpath.internal.SourceTree;
-
-import java.util.*;
+import java.util.Scanner;
 public class TicTacToe {
-    //фиксированнеі переменніе для отображения содержимого ячейки
-    public static final String Pusto = "   ";
-    public static final String Krestik = " X ";
-    public static final String Nolik = " O ";
-    public static String ActivnyIgrok;
+    //фиксированные переменные для отображения содержимого ячейки
+    public static final String EMPTY = "   ";
+    public static final String CROSS = " X ";
+    public static final String NULL = " O ";
+    public static String activPlayer;
     //  переменные для отображение размера и состояния поля
-    public static final int Stolbci = 3;
-    public static final int Ryadi = 3;
-    public static String[][] Сетка = new String[Stolbci][Ryadi];
-    public static int Statusigri;
-    public static final int prodolchetsya = 0, nichya = 1, pobedaX = 3, pobedaO = 4;
+    public static final int COLUMN = 3;
+    public static final int ROW = 3;
+    public static String[][] gameField = new String[COLUMN][ROW];
+    public static int gameStatus;
+    public static final int CONTINUES = 0, DRAW = 1, WIN_X = 3, WIN_O = 4;
     public static Scanner in = new Scanner(System.in);
 
 
     public static void main(String[] args) {
-        start_game();
+        startGame();
 
         do {
 
-            VvodIgroka();
-            analyzgame();
-            VivodPolya();
-            if (Statusigri == pobedaX) {
+            inputPlayer();
+            analysisGame();
+            outputField();
+            if (gameStatus == WIN_X) {
                 System.out.println("X" + "  " + "победил,поздравляем");
-            } else if (Statusigri == pobedaO) {
+            } else if (gameStatus == WIN_O) {
                 System.out.println("O" + "  " + "победил,поздравляем");
-            } else if (Statusigri == nichya) {
+            } else if (gameStatus == DRAW) {
                 System.out.println("Игра закончилась");
             }
-            ActivnyIgrok = (ActivnyIgrok == Krestik ? Nolik : Krestik);
+            activPlayer = (activPlayer == CROSS ? NULL : CROSS);
         }
-        while (Statusigri == prodolchetsya);
+        while (gameStatus == CONTINUES);
     }
-
-    public static void start_game() {
-        for (int ryad = 0; ryad < Ryadi; ryad++) {
-            for (int stolbec = 0; stolbec < Stolbci; stolbec++) {
-                Сетка[ryad][stolbec] = Pusto;
+    //метод начать игру
+    public static void startGame() {
+        for (int row = 0; row < ROW; row++) {
+            for (int column = 0; column < COLUMN; column++) {
+                gameField[row][column] = EMPTY;
 
             }
         }
 
-        ActivnyIgrok = Krestik;
-        VivodPolya();
+        activPlayer = CROSS;
+        outputField();
     }
 
-    //
-    public static void VvodIgroka() {
-        boolean VvodVeren = false;
+    //ввод игрока
+    public static void inputPlayer() {
+        boolean inPutTrue = false;
 
 
         do {
             try {
-                System.out.print("Игрок" + ActivnyIgrok + "Введите ряд  и ячейку от 1-3 через пробел ");
+                System.out.print("Игрок" + activPlayer + "Введите ряд  и ячейку от 1-3 через пробел ");
 
-                int ryad = Integer.parseInt(in.next()) - 1;
-                int stolbec = Integer.parseInt(in.next()) - 1;
+                int row = Integer.parseInt(in.next()) - 1;
+                int column = Integer.parseInt(in.next()) - 1;
 
-                if (ryad >= 0 && ryad < Ryadi && stolbec >= 0 && stolbec < Stolbci && Сетка[ryad][stolbec] == Pusto) {
-                    Сетка[ryad][stolbec] = ActivnyIgrok;
-                    VvodVeren = true;
+                if (row >= 0 && row < ROW && column >= 0 && column < COLUMN && gameField[row][column] == EMPTY) {
+                    gameField[row][column] = activPlayer;
+                    inPutTrue = true;
                 } else {
-                    System.out.print("Выбранное размещение(" + (ryad + 1) + "," +
-                            (stolbec + 1) + ")Не может быть использовано.Попробуйте еще раз   ");
+                    System.out.print("Выбранное размещение(" + (row + 1) + "," +
+                            (column + 1) + ")Не может быть использовано.Попробуйте еще раз   ");
                 }
             } catch (NumberFormatException e) {
                 System.out.println("Вводим только числа");
 
             }   }
-            while (!VvodVeren) ;
+        while (!inPutTrue) ;
 
 
     }
 
-
-    public static void analyzgame() {
-        String Pobeditel = NaitiPobeditelya();
-        if (Pobeditel.equals(Krestik)) {
-            Statusigri = pobedaX;
-        } else if (Pobeditel.equals(Nolik)) {
-            Statusigri = pobedaO;
-        } else if (fieldcells()) {
-            Statusigri = nichya;
+    // анализ  игры,поиск победителя
+    public static void analysisGame() {
+        String winner = findWinner();
+        if (winner.equals(CROSS)) {
+            gameStatus = WIN_X;
+        } else if (winner.equals(NULL)) {
+            gameStatus = WIN_O;
+        } else if (fieldCells()) {
+            gameStatus = DRAW;
         } else {
-            Statusigri = prodolchetsya;
+            gameStatus = CONTINUES;
         }
     }
-    //
-    public static boolean fieldcells(){
-        {for (int ryad = 0; ryad < Ryadi; ryad++) {
-            for (int stolbec = 0; stolbec < Stolbci; stolbec++) {
-                if(Сетка[ryad][stolbec]==Pusto){
+    //метод количество одинаковых ячеек
+    public static boolean fieldCells(){
+        {for (int row = 0; row < ROW; row++) {
+            for (int column = 0; column < COLUMN; column++) {
+                if(gameField[row][column]==EMPTY){
                     return false;
                 }
             }
@@ -101,59 +99,60 @@ public class TicTacToe {
             return  true;
 
 
-    }}
+        }}
 
     //метод все ли клеточки заполненны
-    public static String NaitiPobeditelya() {
-        int kolichestvoodinakovix;
-        for (int ryad = 0; ryad < Ryadi; ryad++) {
-            kolichestvoodinakovix = 0;
-            for (int stolbec = 0; stolbec < Stolbci; stolbec++) {
-                if (Сетка[ryad][0] != Pusto && Сетка[ryad][0] == Сетка[ryad][stolbec]) {
-                    kolichestvoodinakovix++;
+    public static String findWinner() {
+        int numberOfIdentical;
+        for (int row = 0; row < ROW; row++) {
+            numberOfIdentical = 0;
+            for (int column = 0; column < COLUMN; column++) {
+                if (gameField[row][0] != EMPTY && gameField[row][0] == gameField[row][column]) {
+                    numberOfIdentical++;
                 }
 
             }
-            if (kolichestvoodinakovix == 3) {
-                return Сетка[ryad][0];
+            if (numberOfIdentical == 3) {
+                return gameField[row][0];
             }
         }
-        for (int stolbec = 0; stolbec < Stolbci; stolbec++) {
-            kolichestvoodinakovix = 0;
-            for (int ryad = 0; ryad < Ryadi; ryad++) {
-                if (Сетка[0][stolbec] != Pusto && Сетка[0][stolbec] == Сетка[ryad][stolbec]) {
-                    kolichestvoodinakovix++;
+        for (int column = 0; column < COLUMN; column++) {
+            numberOfIdentical = 0;
+            for (int row = 0; row < ROW; row++) {
+                if (gameField[0][column] != EMPTY && gameField[0][column] == gameField[row][column]) {
+                    numberOfIdentical++;
                 }
 
             }
-            if (kolichestvoodinakovix == 3) {
-                return Сетка[0][stolbec];
+            if (numberOfIdentical == 3) {
+                return gameField[0][column];
             }
         }
-        if (Сетка[0][0] != Pusto && Сетка[0][0] == Сетка[1][1] && Сетка[0][0] == Сетка[2][2]) {
+        if (gameField[0][0] != EMPTY && gameField[0][0] == gameField[1][1] && gameField[0][0] == gameField[2][2]) {
 
 
-            return Сетка[0][0];
+            return gameField[0][0];
         }
 
-        if (Сетка[0][2] != Pusto && Сетка[1][1] == Сетка[0][2] && Сетка[2][0] == Сетка[0][2]) {
+        if (gameField[0][2] != EMPTY && gameField[1][1] == gameField[0][2] && gameField[2][0] == gameField[0][2]) {
 
-            return Сетка[0][2];
+            return gameField[0][2];
         }
-      return Pusto;
+        return EMPTY;
+
     }
-
-    public static void VivodPolya() {
-        for (int ryad = 0; ryad < Ryadi; ryad++) {
-            for (int stolbec = 0; stolbec < Stolbci; stolbec++) {
-                System.out.print(Сетка[ryad][stolbec]);
-                if (stolbec != Stolbci - 1) {
+    //метод вывод разметки поля
+    public static void outputField() {
+        for (int row = 0; row < ROW; row++) {
+            for (int column = 0; column < COLUMN; column++) {
+                System.out.print(gameField[row][column]);
+                if (column != COLUMN - 1) {
                     System.out.print("|");
                 }
             }
 
             System.out.println();
-            if (ryad != Ryadi - 1) {
+            if (row != ROW - 1) {
                 System.out.println("-----------");
             }
         }
